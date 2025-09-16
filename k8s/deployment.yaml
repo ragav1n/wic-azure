@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rvce-app
+  labels:
+    app: rvce-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rvce-app
+  template:
+    metadata:
+      labels:
+        app: rvce-app
+    spec:
+      containers:
+      - name: rvce-app
+        image: airoswaraj/myrepo:latest # change to your image
+        ports:
+        - containerPort: 5000

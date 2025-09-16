@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Motivational Quotes App</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            color: white;
+            text-align: center;
+            padding: 50px;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            margin: auto;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        button {
+            background: #ff9800;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #e68900;
+            transform: scale(1.05);
+        }
+        #quote {
+            font-size: 20px;
+            font-weight: 500;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🌟 Motivational Quote Generator App 🌟</h1>
+        <p id="quote">Click the button to get inspired!</p>
+        <button onclick="getQuote()">Get Quote</button>
+    </div>
+
+    <script>
+        async function getQuote() {
+            const response = await fetch("/quote");
+            const data = await response.json();
+            document.getElementById("quote").innerText = data.quote;
+        }
+    </script>
+</body>
+</html>
