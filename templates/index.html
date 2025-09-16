@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>😂 Random Joke App</title>
+    <title>✅ To-Do List App</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, sans-serif;
-            background: linear-gradient(135deg, #ff512f, #dd2476);
+            background: linear-gradient(135deg, #43cea2, #185a9d);
             color: white;
             text-align: center;
             padding: 50px;
@@ -15,45 +15,103 @@
             background: rgba(255, 255, 255, 0.1);
             border-radius: 20px;
             padding: 30px;
-            max-width: 600px;
+            max-width: 500px;
             margin: auto;
             box-shadow: 0 8px 20px rgba(0,0,0,0.3);
         }
+        input {
+            padding: 10px;
+            width: 70%;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+        }
         button {
-            background: #4CAF50;
+            background: #ff9800;
             border: none;
             padding: 10px 20px;
-            margin-top: 20px;
-            border-radius: 10px;
+            border-radius: 8px;
             font-size: 16px;
             color: white;
             cursor: pointer;
             transition: 0.3s;
         }
         button:hover {
-            background: #45a049;
+            background: #e68900;
             transform: scale(1.05);
         }
-        #joke {
-            font-size: 18px;
-            font-weight: 500;
-            margin: 20px 0;
+        ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+        li {
+            background: rgba(0, 0, 0, 0.3);
+            margin: 8px 0;
+            padding: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .done {
+            text-decoration: line-through;
+            opacity: 0.7;
         }
     </style>
 </head>
 <body>
     <div class="card">
-        <h1>😂 Random Joke Generator 😂</h1>
-        <p id="joke">Click the button to get a joke!</p>
-        <button onclick="getJoke()">Get Joke</button>
+        <h1>✅ Flask To-Do List</h1>
+        <input type="text" id="taskInput" placeholder="Enter a task">
+        <button onclick="addTask()">Add</button>
+        <ul id="taskList"></ul>
     </div>
 
     <script>
-        async function getJoke() {
-            const response = await fetch("https://official-joke-api.appspot.com/random_joke");
-            const data = await response.json();
-            document.getElementById("joke").innerText = data.setup + " - " + data.punchline;
+        async function loadTasks() {
+            const res = await fetch("/tasks");
+            const tasks = await res.json();
+            const list = document.getElementById("taskList");
+            list.innerHTML = "";
+            tasks.forEach(task => {
+                const li = document.createElement("li");
+                li.innerHTML = `
+                    <span class="${task.done ? 'done' : ''}" onclick="toggleTask(${task.id})">
+                        ${task.task}
+                    </span>
+                    <button onclick="deleteTask(${task.id})">❌</button>
+                `;
+                list.appendChild(li);
+            });
         }
+
+        async function addTask() {
+            const input = document.getElementById("taskInput");
+            const task = input.value.trim();
+            if (task === "") return;
+
+            await fetch("/tasks", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ task })
+            });
+            input.value = "";
+            loadTasks();
+        }
+
+        async function toggleTask(id) {
+            await fetch(`/tasks/${id}/toggle`, { method: "PUT" });
+            loadTasks();
+        }
+
+        async function deleteTask(id) {
+            await fetch(`/tasks/${id}`, { method: "DELETE" });
+            loadTasks();
+        }
+
+        // Load tasks on page load
+        loadTasks();
     </script>
 </body>
 </html>
